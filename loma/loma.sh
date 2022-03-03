@@ -2,7 +2,7 @@
 
 minimap2=$6									# minimap2
 mafft=$7									# MAFFT
-code_dir=./src									# script directory
+curdir=`pwd`; code_dir=${curdir}/src									# script directory
 input_fastq_dir=$1								# fastq file as INPUT
 block=3000
 step=1000
