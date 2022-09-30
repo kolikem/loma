@@ -1,6 +1,6 @@
 # loma
 
-Local assembler tool for long-read data
+LoMA is a localized assembler for long reads.
 
 ## Users' Guide
 Download
@@ -15,4 +15,4 @@ $ sh loma.sh <INPUT DIR> <OUTPUT DIR> 3 0 ont <minimap2> <MAFFT>
 Input is a fasta file.
 
 ## Dependency
-Please install minimap2 and mafft beforehand.
+Please install minimap2 and mafft before you use LoMA and install them.
