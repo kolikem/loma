@@ -1,19 +1,24 @@
 # loma
 
 LoMA is a localized assembler for long reads.
+The following instructions assume you use UNIX-like OS.
 
 ## Users' Guide
-You can download the source code:
+You can download the source code.
 ```sh
 $ git clone https://github.com/kolikem/loma
 ```
 Usage
-You can use LoMA by running the shell script:
+You can use LoMA by running the shell script.
 ```sh
 $ cd loma/loma
 $ sh loma.sh <INPUT DIR> <OUTPUT DIR> 3 0 ont <minimap2> <MAFFT>
 ```
-Input is a fasta file.
+INPUT DIR is a directory in which FASTQ files that you want to assembly are stored.
+Input format is FASTQ.
+OUTPUT DIR is a directory in which you want to save consensus sequences.
+For the last two parameters, please paste pathes to minimap2 and MAFFT on your computer.
 
 ## Dependency
-Please install minimap2 and mafft before you use LoMA and install them.
+Please install minimap2 and MAFFT before you use LoMA.
+Version demand: minimap2 ver.2.0 <=, MAFFT ver.7 <=
