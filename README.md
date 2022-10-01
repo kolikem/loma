@@ -3,11 +3,12 @@
 LoMA is a localized assembler for long reads.
 
 ## Users' Guide
-Download
+You can download the source code:
 ```sh
 $ git clone https://github.com/kolikem/loma
 ```
 Usage
+You can use LoMA by running the shell script:
 ```sh
 $ cd loma/loma
 $ sh loma.sh <INPUT DIR> <OUTPUT DIR> 3 0 ont <minimap2> <MAFFT>
