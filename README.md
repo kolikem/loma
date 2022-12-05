@@ -18,15 +18,14 @@ LoMA runs with the following parameters:
 -h: <INT> The number of reads for both ends' truncation. Both ends of a region typically have a lower depth, so LoMA limits the area constructed. It can be changed according to the size of users' data. (default=10)  
 -d: <INT> The number of sigma in read classification. Users usually do not need to change this parameter. (default=3)  
 -l: <ont/pb> Data. Nanopore (ONT) or PacBio. (default=ont)  
--c: <INT> Minimum coverage rate of a block.  
--r: <FLOAT> A parameter for data filtering by alignment accuracy's rank %.  
+-c: <INT> Minimum coverage rate of a block. (default=0.7)  
+-r: <FLOAT> A parameter for data filtering by alignment accuracy's rank %. (default=0.5)  
 -m: <INT> A parameter for data filtering by the number of matching bases. (default=1000)  
 -H: <PATH> minimap2 (Heng Li). If you have not set the path.  
 -K: <PATH> MAFFT (Katoh et al.). If you have not set the path.  
 
 ```sh
-$ cd loma/loma
-$ sh loma.sh <INPUT DIR> <OUTPUT DIR> 3 0 ont <minimap2> <MAFFT>
+$ sh loma.sh -I <INPUT> -O <OUTPUT>
 ```
 INPUT DIR is a directory in which FASTQ files that you want to assembly are stored.
 Input format is FASTQ.
