@@ -18,6 +18,7 @@ LoMA runs with the following parameters:
 -h: The number of reads for both ends' truncation. Both ends of a region typically have a lower depth, so LoMA limits the area constructed. It can be changed according to the size of users' data. (default=10)  
 -d: The number of sigma in read classification. Users usually do not need to change this parameter. (default=3)
 
+
 ```sh
 $ cd loma/loma
 $ sh loma.sh <INPUT DIR> <OUTPUT DIR> 3 0 ont <minimap2> <MAFFT>
