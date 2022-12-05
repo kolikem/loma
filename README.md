@@ -1,10 +1,16 @@
 # loma
 
+## Summary
+Overview:  
 LoMA is a localized assembly tool for long reads.  
-The current version is optimized for ONT reads although it can also be used for PacBio data.  
-The following instructions assume users use UNIX-like OS. LoMA needs minimap2 (Heng Li) and MAFFT (Katoh et al.), so users please install them beforehand.
+It starts with interpretations of the all-to-all alignment to your ROI. LoMA lays out long reads after some filterations. It divides the layout into multiple blocks to make partial consensus sequences. They will be contatenated into one consensus sequence.
 
-## Users' Guide
+Note:  
+The current version is optimized for ONT reads although it can also be used for PacBio data.  
+The following instructions assume users use UNIX-like OS. LoMA needs minimap2 (Heng Li) and MAFFT (Katoh et al.), so users please install them beforehand.  
+Typically, LoMA takes 10-1000 reads.
+
+## Guidance
 You can download the source code.
 ```sh
 $ git clone https://github.com/kolikem/loma
