@@ -2,7 +2,7 @@
 
 LoMA is a localized assembly tool for long reads.  
 The current version is optimized for ONT reads although it can also be used for PacBio data.  
-The following instructions assume users use UNIX-like OS.
+The following instructions assume users use UNIX-like OS. LoMA needs minimap2 (Heng Li) and MAFFT (Katoh et al.), so users please install them beforehand.
 
 ## Users' Guide
 You can download the source code.
@@ -21,5 +21,5 @@ OUTPUT DIR is a directory in which you want to save consensus sequences.
 For the last two parameters, please paste pathes to minimap2 and MAFFT on your computer.
 
 ## Dependency
-Please install minimap2 and MAFFT before you use LoMA.
-Version demand: minimap2 ver.2.0 <=, MAFFT ver.7 <=
+minimap2 ver.2.0 <=  
+MAFFT ver.7 <=
