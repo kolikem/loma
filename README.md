@@ -14,7 +14,7 @@ LoMA runs with the following parameters:
 -I: input directory. LoMA takes FASTQ files as input data. Please make an input directory inclusing FASTQ files for which you want to obtain consensus sequences. Only one file in the directory works.  
 -O: output directory. LoMA generates a consensus sequence for each region in input FASTQ files. The final sequences will be stored in a directory named "CONSENSUS", which is automatically made in the process.  
 -b: block size. This is the window size. When LoMA makes a consensus sequene, it divides the whole region into pieces. (default=3000)  
--s: step size. This is the step size of blocks. (default=2000)
+-s: step size. This is the step size of blocks. (default=2000)  
 -h: The number of reads for both ends' truncation. Both ends of a region typically have a lower depth, so LoMA limits the area constructed. It can be changed according to the size of users' data. (default=10)  
 -d: The number of sigma in read classification. Users usually do not need to change this parameter. (default=3)
 
