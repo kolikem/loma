@@ -10,11 +10,10 @@ sys.argv[5] - ステップサイズ
 sys.argv[6] - FASTAファイルに入れるためのblockにかかっている長さの最低ライン
 sys.argv[7] - アラインメント長下位 x % の切り捨て
 sys.argv[8] - output
-
+sys.argv[9] - paf filtering, matching bases lower limit (according to the size of target)
 
 To run, python3 EsS.py <fq> <paf> <hashikko> <block size> <step size> <length restriction>
 
-*** 細かいコーディングについては「研究ノート１」にメモ
 //////////////////////////////////////////////////////////////////////////////////////////"""
 
 print("---EsS.py---")
@@ -43,11 +42,6 @@ def getSeqDiv_from_paf_format(line):
 	else:
 		seq_div = "*"
 	return seq_div
-
-
-		
-
-
 
 '''（１）'''
 
@@ -78,8 +72,6 @@ for i in range(len(fq_name)):
 fq_name = fq_name0      #fq_name: All reads' names as list.
 numFq = len(fq_name)    #numFq: Number of reads, in FASTQ file.
 
-#for i in enumerate(fq_name):
-#    print(i)
 print('fastq内リード数:', numFq, '本')
 
 
@@ -133,10 +125,6 @@ with open(sys.argv[2]) as file_paf:
 			if i % 17 == 10:
 				list_paf_alnLen.append(int(line_split[i]))
 
-#PAF_data_INIT = np.array(list_paf_name1)
-#PAF_data_INIT = 
-
-
 #For relative, replace, + with 1, - with -1.
 for i in range(len(list_paf_relative)):
     if list_paf_relative[i] == '+':
@@ -145,14 +133,9 @@ for i in range(len(list_paf_relative)):
         list_paf_relative[i] = -1
 
 
-
-
-
 '''（３）端のアラインメント不成の長さのフィルター　＜フィルター１＞'''
 
 hashikko = float(sys.argv[3])   #Define both ends of read,to specify dangling reads.
-#9/10 変更点　端の定義を割合ではなく絶対値にする。割合だと長さ10kbのリードは5%でも500bの不斉を許容することになるから。
-#hashikko = int(sys.argv[3])
 
 list_ox = []    #o for inclusion, x for exclusion, as list
 
@@ -161,24 +144,19 @@ for i in range(len(length_1)):
 
     if list_paf_relative[i] == 1:
         if (list_paf_start1[i] / length_1[i]) >= hashikko and (list_paf_start2[i] / length_2[i]) >= hashikko:
-        #if list_paf_start1[i] >= hashikko and list_paf_start2[i] >= hashikko: #9/10
             list_ox.append('x')
         elif ((length_1[i] - list_paf_end1[i]) / length_1[i]) >= hashikko and ((length_2[i] - list_paf_end2[i]) / length_2[i]) >= hashikko:
-        #elif length_1[i] - list_paf_end1[i] >= hashikko and length_2[i] - list_paf_end2[i] >= hashikko: #9/10
             list_ox.append('x') 
         else:
             list_ox.append('o')
 
     elif list_paf_relative[i] == -1:
         if (list_paf_start1[i] / length_1[i]) >= hashikko and ((length_2[i] - list_paf_end2[i]) / length_2[i]) >= hashikko:
-        #if list_paf_start1[i] >= hashikko and length_2[i] - list_paf_end2[i] >= hashikko: #9/10
             list_ox.append('x')
         elif ((length_1[i] - list_paf_end1[i]) / length_1[i]) >= hashikko and (list_paf_start2[i] / length_2[i]) >= hashikko:
-        #elif length_1[i] - list_paf_end1[i] >= hashikko and list_paf_start2[i] >= hashikko: #9/10
             list_ox.append('x')
         else:
             list_ox.append('o')
-
 
 
 '''（４）PAFデータの選択　＜フィルター１＞'''
@@ -279,11 +257,6 @@ length_2 = [length_2[i] for i in range(len(length_2)) if i not in rem_pos]
 
 numPaf = len(paf_name1)     #Number of renewed PAF data.
 
-
-
-
-
-#12/11 追加 アラインメント長順に並び替えてアラインメント長の下位 X ％は使用しないようにする
 X = float(sys.argv[7])
 
 lenAln_l = [(i, paf_end1[i] - paf_start1[i]) for i in range(numPaf)] 
@@ -310,10 +283,6 @@ length_2 = [length_2[i] for i in range(numPaf) if i not in lower_l]
 
 numPaf = len(paf_name1)     # Renew number of PAF data.
 
-
-
-
-# 2021 05 18 minimap2のava alignment結果=pafのペアワイズアラインメントの信頼度の高いものだけを使用する.
 # 関数定義
 # match: 一致塩基数 --> default >= 500
 # div: sequence divergence --> default < 0.1
@@ -329,12 +298,7 @@ def Cleansing_by_MatchBase_SeqDiv(match, div, paf_data):
 	return new_paf
 
 
-
-
 ######ここまではデータの成型######
-
-
-
 
 # ここまでにフィルターされたpafデータを行列にして格納
 # PAF_data
@@ -353,10 +317,11 @@ def Cleansing_by_MatchBase_SeqDiv(match, div, paf_data):
 #   [paf_alnLen],
 #   [paf_seqDiv]		    ]
 PAF_data = np.array([paf_name1, paf_start1, paf_end1, paf_name2, paf_start2, paf_end2, paf_relative, length_1, length_2, paf_matchBase, paf_alnLen, paf_seqDiv])
-
-
-PAF_data = Cleansing_by_MatchBase_SeqDiv(500, 0.1, PAF_data)
+PAF_data = Cleansing_by_MatchBase_SeqDiv(int(sys.argv[9]), 0.1, PAF_data)
 numPaf = len(PAF_data[0])
+#print("PAF_data", PAF_data)
+#print("numPaf", numPaf)
+
 
 
 ##### 関数定義 #####
@@ -470,7 +435,6 @@ print('base+-', base)
 plusMinus = plusMinusOn(base, PAF_data_sort)
 print("plusMinus\n", plusMinus)
 #ここまで・plusMinus作る過程
-
 
 
 '''（７）重ね合わせ'''

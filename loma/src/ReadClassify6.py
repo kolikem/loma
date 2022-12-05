@@ -397,7 +397,7 @@ strangeWhere_integrated = ConsecutiveIntegrate(strangeWhere_integrated, 700)
 
 
 print(sys.argv[7])
-print('異常位置候補:', len(strangeWhere_integrated), 'コ', strangeWhere_integrated)
+#print('異常位置候補:', len(strangeWhere_integrated), 'コ', strangeWhere_integrated)
 
 
 # 検出する最低値を定める
@@ -510,8 +510,9 @@ for i in range(num_z-1):
 			chimera_connect.append(1)
 		else:
 			chimera_connect.append(-1)
-print("chimera_connect")
-print(chimera_connect)
+
+#print("chimera_connect")
+#print(chimera_connect)
 
 
 
@@ -532,42 +533,45 @@ for i in range(1,len(idx_2_connect)):
 
 Z_hap1_, Z_hap2_, notZ_ = [], [], []
 for i in range(len(group)):
-	start, end = group[i][0], group[i][1]
-	if start == end:
-		Z_hap1_.append(Z_hap1[start])
-		Z_hap2_.append(Z_hap2[start])
-		notZ_.append(notZ[start])
-		continue
-	
-	toggle = 1
-	z_hap1_i, z_hap2_i, notz_i = [Z_hap1[start]], [Z_hap2[start]], [notZ[start]]
-	for j in range(start, end):
-		if chimera_connect[j] == 1:
-			toggle = toggle
-		elif chimera_connect[j] == -1:
-			toggle = -toggle
-		if toggle == 1:
-			z_hap1_i.append(Z_hap1[j+1])
-			z_hap2_i.append(Z_hap2[j+1])
-			notz_i.append(notZ[j+1])
-		elif toggle == -1:
-			z_hap1_i.append(Z_hap2[j+1])
-			z_hap2_i.append(Z_hap1[j+1])
-			notz_i.append(notZ[j+1])
+    start, end = group[i][0], group[i][1]
+    if start == end:
+        try:
+            Z_hap1_.append(Z_hap1[start])
+            Z_hap2_.append(Z_hap2[start])
+            notZ_.append(notZ[start])
+            continue
+        except IndexError:
+            continue
 
-	Z_hap1_i = set()
-	for j in range(len(z_hap1_i)):
-		Z_hap1_i = Z_hap1_i | set(z_hap1_i[j])
+    toggle = 1
+    z_hap1_i, z_hap2_i, notz_i = [Z_hap1[start]], [Z_hap2[start]], [notZ[start]]
+    for j in range(start, end):
+        if chimera_connect[j] == 1:
+            toggle = toggle
+        elif chimera_connect[j] == -1:
+            toggle = -toggle
+        if toggle == 1:
+            z_hap1_i.append(Z_hap1[j+1])
+            z_hap2_i.append(Z_hap2[j+1])
+            notz_i.append(notZ[j+1])
+        elif toggle == -1:
+            z_hap1_i.append(Z_hap2[j+1])
+            z_hap2_i.append(Z_hap1[j+1])
+            notz_i.append(notZ[j+1])
 
-	Z_hap2_i = set()
-	for j in range(len(z_hap2_i)):
-		Z_hap2_i = Z_hap2_i | set(z_hap2_i[j])
+    Z_hap1_i = set()
+    for j in range(len(z_hap1_i)):
+        Z_hap1_i = Z_hap1_i | set(z_hap1_i[j])
 
-	notZ_i = set(all_read_name) - Z_hap1_i - Z_hap2_i
+    Z_hap2_i = set()
+    for j in range(len(z_hap2_i)):
+        Z_hap2_i = Z_hap2_i | set(z_hap2_i[j])
 
-	Z_hap1_.append(list(Z_hap1_i))
-	Z_hap2_.append(list(Z_hap2_i))
-	notZ_.append(list(notZ_i))
+    notZ_i = set(all_read_name) - Z_hap1_i - Z_hap2_i
+
+    Z_hap1_.append(list(Z_hap1_i))
+    Z_hap2_.append(list(Z_hap2_i))
+    notZ_.append(list(notZ_i))
 
 Z_hap1, Z_hap2, notZ = Z_hap1_, Z_hap2_, notZ_
 

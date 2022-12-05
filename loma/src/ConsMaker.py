@@ -65,8 +65,10 @@ l_txt = f_txt.readlines()
 name_txt = []
 for i in range(len(l_txt)):
     if l_txt[i][0] == '>':
-        name = re.findall('>.*?\t', l_txt[i])
-        name = name[0][1:-1:]
+        #name = re.findall('>.*?\t', l_txt[i])
+        name = re.split("\t| ", l_txt[i])[0]
+        name = name[1:]
+        #name = name[0][1:-1:]
         name_txt.append(name)
 
 f_fq = open(sys.argv[1])
@@ -74,8 +76,10 @@ l_fq = f_fq.readlines()
 qss = {}
 for i in range(len(l_fq)):
     if i % 4 == 0 and l_fq[i][0] == '@':
-        name = re.findall('@.*? ', l_fq[i])
-        name = name[0][1:-1:]
+        name = re.split("\t| ", l_fq[i])[0]
+        name = name.replace("\n","")
+        name = name[1:]
+        #name = name[0][1:-1:]
         if name in name_txt:
             qss[name] = l_fq[i+3][:-1]
         else:

@@ -36,34 +36,29 @@ if het_num == 0:
     number_r = []
     for out4 in out4_path:
         num = os.path.basename(out4)
+        print("file name:", num)
         num = num[:-9]
-        m = re.search(r'\d*-\d*_.*-.*', num)
-        num = m.group()
-        m = re.search(r'-.*_.*-.*', num)
-        num = m.group()
-        m = re.search(r'_.*', num)
-        num = m.group()
-        num = num[1:]
-
-        m = re.search(r'.*\d-', num)
-        numL = m.group()
-        numL = numL[:-1]
-
-        if '--' in num:
-            m = re.search(r'--.*', num)
-            numR = m.group()
-            numR = numR[1:]
+        num = num.split("_")[-1]    # "-1337-1662", "-10000--5000"
+        if num[0] == "-":
+            if '--' in num:
+                num = num.split("-")
+                numL = "-"+num[1]
+                numR = "-"+num[3]
+            else:
+                num = num.split("-")
+                numL = "-"+num[1]
+                numR = num[2]
         else:
-            m = re.search(r'\d-.*', num)
-            numR = m.group()
-            numR = numR[2:]
+            num = num.split("-")
+            numL = num[0]
+            numR = num[1]
 
+        print("numL", numL)
         number_l.append(int(numL))
         number_r.append(int(numR))
 
     number_l_sorted = sorted(number_l)
     number_r_sorted = sorted(number_r)
-
 
 
     #ブロック連続が途切れるところを記録（右側ブロック番号）
@@ -82,6 +77,4 @@ if het_num == 0:
             if f'_{number_l_sorted[i]}-{number_r_sorted[i]}_' in out4:
                 os.rename(out4, out4[:-4]+'_'+str(i)+'.txt')
                 break         
-
-#ヘテロブロックが存在する場合
 
