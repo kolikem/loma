@@ -11,6 +11,11 @@ The following instructions assume users use UNIX-like OS. LoMA needs minimap2 (H
 Typically, LoMA takes 10-1000 reads.
 
 ## Guidance
+### Input
+fastq file
+### Output
+fasta file
+### Usage
 You can download the source code.
 ```sh
 $ git clone https://github.com/kolikem/loma
@@ -19,6 +24,7 @@ For general usage, a user can run LoMA by:
 ```sh
 $ sh loma.sh -I <INPUT> -O <OUTPUT>
 ```
+### Parameters
 LoMA runs with the following parameters:  
 -I: <PATH> input directory. LoMA takes FASTQ files as input data. Please make an input directory inclusing FASTQ files for which you want to obtain consensus sequences. Only one file in the directory works.  
 -O: <PATH> output directory. LoMA generates a consensus sequence for each region in input FASTQ files. The final sequences will be stored in a directory named "CONSENSUS", which is automatically made in the process.  
@@ -32,11 +38,6 @@ LoMA runs with the following parameters:
 -m: <INT> A parameter for data filtering by the number of matching bases. (default=1000)  
 -H: <PATH> minimap2 (Heng Li). If you have not set the path.  
 -K: <PATH> MAFFT (Katoh et al.). If you have not set the path.  
-
-INPUT DIR is a directory in which FASTQ files that you want to assembly are stored.
-Input format is FASTQ.
-OUTPUT DIR is a directory in which you want to save consensus sequences.
-For the last two parameters, please paste pathes to minimap2 and MAFFT on your computer.
 
 ## Dependency
 minimap2 ver.2.0 <=  
