@@ -1,7 +1,8 @@
 # loma
 
-LoMA is a localized assembler for long reads.
-The following instructions assume you use UNIX-like OS.
+LoMA is a localized assembly tool for long reads.
+The current version is optimized for ONT reads although it can also be used for PacBio data.
+The following instructions assume users use UNIX-like OS.
 
 ## Users' Guide
 You can download the source code.
