@@ -9,7 +9,10 @@ You can download the source code.
 ```sh
 $ git clone https://github.com/kolikem/loma
 ```
-Usage
+For general usage, a user can run LoMA by:
+```sh
+$ sh loma.sh -I <INPUT> -O <OUTPUT>
+```
 LoMA runs with the following parameters:  
 -I: <PATH> input directory. LoMA takes FASTQ files as input data. Please make an input directory inclusing FASTQ files for which you want to obtain consensus sequences. Only one file in the directory works.  
 -O: <PATH> output directory. LoMA generates a consensus sequence for each region in input FASTQ files. The final sequences will be stored in a directory named "CONSENSUS", which is automatically made in the process.  
@@ -24,9 +27,6 @@ LoMA runs with the following parameters:
 -H: <PATH> minimap2 (Heng Li). If you have not set the path.  
 -K: <PATH> MAFFT (Katoh et al.). If you have not set the path.  
 
-```sh
-$ sh loma.sh -I <INPUT> -O <OUTPUT>
-```
 INPUT DIR is a directory in which FASTQ files that you want to assembly are stored.
 Input format is FASTQ.
 OUTPUT DIR is a directory in which you want to save consensus sequences.
