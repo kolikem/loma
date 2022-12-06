@@ -30,7 +30,7 @@ if [ "$flg_O" = "TRUE" ]; then echo "-O defined: " $DIR; fi
 if [ "$flg_b" = "TRUE" ]; then echo "-b defined: " $block
 else block=3000; echo "-b not defined. default value is used: " $block; fi
 if [ "$flg_s" = "TRUE" ]; then echo "-s defined: " $step
-else step=2000; echo "-b not defined. default value is used: " $step; fi
+else step=2000; echo "-s not defined. default value is used: " $step; fi
 if [ "$flg_h" = "TRUE" ]; then echo "-h defined: " $hashicut
 else hashicut=10; echo "-h not defined. default value is used: " $hashicut; fi
 if [ "$flg_d" = "TRUE" ]; then echo "-d defined: " $n_sigma
@@ -46,7 +46,7 @@ else ess_paf_clean_match_base_number_lower=1000; echo "-m not defined. default v
 
 
 curdir=`pwd` #; code_dir=${curdir}/src									# script directory
-code_dir=`dirname $0`/src/
+code_dir=`dirname $0`/src
 ##abso=$4
 cd ${DIR}
 dir1=${DIR}/dir1
