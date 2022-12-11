@@ -265,7 +265,7 @@ lower_l = []
 for i in range(round(numPaf * X)):
     lower_l.append(lenAln_sorted[i][0])
 
-print("下位", X*100, "%点アラインメント長フィルタリング", lenAln_sorted[round(numPaf * X)-1])
+print("discard lower", X*100, "% of the alignemts", lenAln_sorted[round(numPaf * X)-1])
 
 paf_name1 = [paf_name1[i] for i in range(numPaf) if i not in lower_l]
 paf_start1 = [paf_start1[i] for i in range(numPaf) if i not in lower_l]
@@ -406,27 +406,47 @@ indexes_order = [i[0] for i in sorted(enumerate(fq_length), key=lambda x: x[1])]
 indexes_order = indexes_order[::-1]
 print('indexes_order', indexes_order)
 
+
 # 長いリードを ± 基準にする.
 
 plmi_l_10 = []
-for i in range(10):     #長いリード上から10本
-    plmi_l_10.append(plusMinusOn(indexes_order[i], PAF_data_sort))
-
-cnt_same_plmi = [0 for i in range(10)]
-for i in range(10):
-    p_i = plmi_l_10[i]
-    p_i_rev = [-p_i[k] for k in range(len(p_i))]
-    for j in range(10):
-        p_j = plmi_l_10[j]
-        if p_i == p_j or p_i_rev == p_j:
-            cnt_same_plmi[i] += 1
-
 max_idx = 0
 max_num = 0
-for i in range(10):
-    if max_num < cnt_same_plmi[i]:
-        max_idx = i
-        max_num = cnt_same_plmi[i]
+if len(indexes_order) < 10:	# リード数 < 10		add on 221211
+	for i in range(len(indexes_order)):
+		plmi_l_10.append(plusMinusOn(indexes_order[i], PAF_data_sort))
+
+	cnt_same_plmi = [0 for i in range(len(indexes_order))]
+	for i in range(len(indexes_order)):
+		p_i = plmi_l_10[i]
+		p_i_rev = [-p_i[k] for k in range(len(p_i))]
+		for j in range(len(indexes_order)):
+			p_j = plmi_l_10[j]
+			if p_i == p_j or p_i_rev == p_j:
+				cnt_same_plmi[i] += 1
+
+	for i in range(len(indexes_order)):
+		if max_num < cnt_same_plmi[i]:
+			max_idx = i
+			max_num = cnt_same_plmi[i]
+
+else:				# リード数 >= 10
+	for i in range(10):     #長いリード上から10本
+		plmi_l_10.append(plusMinusOn(indexes_order[i], PAF_data_sort))
+
+	cnt_same_plmi = [0 for i in range(10)]
+	for i in range(10):
+		p_i = plmi_l_10[i]
+		p_i_rev = [-p_i[k] for k in range(len(p_i))]
+		for j in range(10):
+			p_j = plmi_l_10[j]
+			if p_i == p_j or p_i_rev == p_j:
+				cnt_same_plmi[i] += 1
+
+	for i in range(10):
+		if max_num < cnt_same_plmi[i]:
+			max_idx = i
+			max_num = cnt_same_plmi[i]
 
 base = indexes_order[max_idx]
 print('base+-', base)
