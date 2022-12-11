@@ -43,8 +43,8 @@ LoMA runs with the following parameters:
   
 -c: <INT> Minimum coverage rate of a block. (default=0.7)  
   
--r: <FLOAT> A parameter for data filtering by alignment accuracy's rank %. (default=0.5)  
-  
+-r: <FLOAT> A parameter for data filtering by alignment accuracy's rank (discard 100*x% of alignments). (default=0.5)  
+
 -m: <INT> A parameter for data filtering by the number of matching bases. (default=1000)  
   
 -H: <PATH> minimap2 (Heng Li). If you have not set the path.  
