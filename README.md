@@ -58,4 +58,3 @@ MAFFT ver.7 <=
 ## Reference
 Ko Ikemoto et al. doi: https://doi.org/10.1101/2022.12.02.518938
 
- ![LoMA](/kolikem/images/loma_logo.png "LoMA")
