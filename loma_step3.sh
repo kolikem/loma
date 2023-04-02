@@ -60,66 +60,15 @@ abso=0
 
 
 # Step1. 1st-CS.
-cd ${dir1}
-for file in ${input_fastq_dir}/*fastq; do
-	file=`basename $file`;
-	name=`echo ${file}`;
-	$minimap2 -x ava-${lr} ${input_fastq_dir}/$file ${input_fastq_dir}/$file > ${dir1}/${name}.out1;
-	echo fastq file  : $file;
-	echo region name : $name;
-	echo "Runnig command: python3 ${code_dir}/EsS.py ${input_fastq_dir}/$file ${dir1}/${name}.out1 0.04 ${block} ${step} ${ess_min_cov_block} ${ess_lower_x_percent_discard} ${dir1} ${ess_paf_clean_match_base_number_lower}";
-	python3 ${code_dir}/EsS2.py ${input_fastq_dir}/$file ${dir1}/${name}.out1 0.04 ${block} ${step} ${ess_min_cov_block} ${ess_lower_x_percent_discard} ${dir1} ${ess_paf_clean_match_base_number_lower};
-	for file2 in ${dir1}/${name}.out2.*; do
-		file2=`basename $file2`;
-		number=`echo ${file2}| rev`; number=(${number//./ }); number=`echo ${number[0]}| rev`;
-		name2=`echo ${file2}| sed -e "s/out2.${number}/out3.${number}/"`;
-		$mafft --op 0 --ep 1 --thread 8 --threadit 0 ${dir1}/$file2 > ${dir1}/$name2;
-	done;
-	for file3 in ${dir1}/${name}.out3.*; do
-		file3=`basename $file3`;
-		python3 ${code_dir}/LGS3.py ${dir1}/${file3} ${dir1} ${dir1} ${block};
-	done;
-	for file7 in ${dir1}/${name}.out7.*; do
-		file7=`basename $file7`;
-		number=`echo ${file7}| rev`; number=(${number//./ }); number=`echo ${number[0]}| rev`;
-		name8=`echo ${file7}| sed -e "s/out7.${number}/out8.${number}/"`;
-		echo "Running command: $mafft --op 0 --ep 1 --thread 8 --threadit 0 ${dir1}/$file7 > ${dir1}/${name8}";
-		$mafft --op 0 --ep 1 --thread 8 --threadit 0 ${dir1}/$file7 > ${dir1}/${name8};
-	done;
-	for file8 in ${dir1}/${name}.out8.*; do
-		file8=`basename $file8`;
-		number=`echo ${file8}| rev`; number=(${number//./ }); number=`echo ${number[0]}| rev`;
-		name4=`echo ${file8}| sed -e "s/out8.${number}/out4.${number}/"`;
-		python3 ${code_dir}/SCM2.py ${input_fastq_dir}/$file ${dir1}/$file8 0.6 0.5 0.4 ${dir1}/${name4};
-	done;
-
-	rm ${dir1}/${name}*out2*
-	rm ${dir1}/${name}*out3*
-	rm ${dir1}/${name}*out7*
-	
-	cnt_out4=`ls -1 ${dir1}/${name}.out4.*| wc -l`;
-	python3 ${code_dir}/RCS2.py ${dir1}/${name} ${cnt_out4} ${block} ${step} $mafft;
-	rm ${dir1}/${name}*out8*
-done
-
 time2=`date +%s`
 
-
 # Step2. hetero-class.
-input_sam2nd_dir=${dir2}/sam2nd
-mkdir ${input_sam2nd_dir}
-for cons in ${dir1}/*.cs; do
-	name=`basename ${cons}`; name=`echo ${name}|rev|cut -c 4-|rev`;
-        $minimap2 -a ${cons} ${input_fastq_dir}/${name} > ${input_sam2nd_dir}/${name}_map_on_1st_cs.sam;	
-	python3 ${code_dir}/ReadClassify6.py ${input_sam2nd_dir}/${name}_map_on_1st_cs.sam 0.1 500 100 100 8 ${input_fastq_dir}/${name} ${dir2} ${input_fastq2nd_dir} ${n_sigma} ${abso};
-done
 time3=`date +%s`
-
 
 # Step3. 2nd-CS.
 cd ${dir2}
 nakami=`ls ${input_fastq2nd_dir}`
-if [ -z ${nakami} ]; then echo 'finished'; else
+if [ -z "${nakami}" ]; then echo '3rd step finished. No hetero region detected.'; else 'Hetero region detected.';
 for file in ${input_fastq_dir}/*fastq*; do
 	file=`basename $file`;
 	name=`echo ${file}`;

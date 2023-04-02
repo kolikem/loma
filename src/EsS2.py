@@ -68,7 +68,7 @@ for i in range(len(fq_name)):
 fq_name = fq_name0      #fq_name: All reads' names as list.
 numFq = len(fq_name)    #numFq: Number of reads, in FASTQ file.
 
-print('fastq内リード数:', numFq, '本')
+print('#Reads in fastq:', numFq)
 
 
 '''（２）'''
@@ -693,7 +693,7 @@ for i in range(numFq):
     if plusMinus[i] != 0:
         nonZero.append(i)
 
-print('plusMinus  nonZero数:', len(nonZero))
+print('#plusMinus-nonZero:', len(nonZero))
 
 # 一番基礎になる長いリード２本を選択（plusMinusが0なら次に長いリードを選択）
 ind1, ind2 = indexes_order[0], indexes_order[1]
@@ -706,7 +706,7 @@ while plusMinus[ind2] == 0:
     ind2 = indexes_order[ind_cnt]
     ind_cnt += 1
 
-print(ind_cnt-2, '回基準が取り直された。基準は', ind_cnt-2, '番目')
+print("Replaced times to define the base read: ", ind_cnt-2)
 placement = placementBy(ind1, ind2)
 
 # もし選択された２本がなすplacement（アセンブリ）が空になる場合は、さらに次のリードを選択

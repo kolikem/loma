@@ -412,9 +412,9 @@ print("average_cnt", average_cnt)
 range_dict = Range(sam_dict)    #リードの被覆範囲を辞書化（クリップも含める）
 all_read_name = [i for i in sam_dict]
 # 5/24
-print("全体の#read", len(all_read_name))
+print("#all read", len(all_read_name))
 coverage = round(sum(range_dict[i][1]-range_dict[i][0] for i in range_dict)/len(y))
-print("全体の平均coverage", coverage)
+print("mean coverage", coverage)
 
 
 
@@ -456,11 +456,11 @@ for i in strangeWhere_integrated:
     # 方法1: 二項分布のn-sigma区間に入る本数なら最終的な異常位置とする.
     if int(sys.argv[10]) >= 1:
         sigma_range = Binomial(len(z_i), int(sys.argv[10]))
-        print("異常候補領域", i, "でのリード総本数:", len(z_i))
-        print("異常候補領域", i, "での", sys.argv[10], "-sigma区間", sigma_range)
+        #print("異常候補領域", i, "でのリード総本数:", len(z_i))
+        #print("異常候補領域", i, "での", sys.argv[10], "-sigma区間", sigma_range)
     
         if len(z_i_hap1) < sigma_range[0] or sigma_range[1] < len(z_i_hap1) or len(z_i_hap2) < sigma_range[0] or sigma_range[1] < len(z_i_hap2):
-            print("異常候補", i, "は二項分布の", sys.argv[10], "σ区間外であり、異常とは認められませんでした。")
+            #print("異常候補", i, "は二項分布の", sys.argv[10], "σ区間外であり、異常とは認められませんでした。")
             # 異常位置coverリード情報.
             content_coverinfo += str(cntr) + '\t' + str(i) + '\t' + str(len(z_i_hap1)) + '\t' + str(len(z_i)) + '\t' + 'homo' + '\n'
         else:
