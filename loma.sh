@@ -171,6 +171,9 @@ done
 fi
 time4=`date +%s`
 
+mv ${dir1}/*.cs ${CONSENSUS}
+mv ${dir2}/*.cs ${CONSENSUS}
+
 time_firstCS=$((time2-time1))
 time_readSep=$((time3-time2))
 time_secondCS=$((time4-time3))
