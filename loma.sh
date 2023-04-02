@@ -119,49 +119,49 @@ time3=`date +%s`
 # Step3. 2nd-CS.
 cd ${dir2}
 nakami=`ls ${input_fastq2nd_dir}`
-if [ -z ${nakami} ]; then echo 'finished'; else
-for file in ${input_fastq_dir}/*fastq*; do
+if [ -z "${nakami}" ]; then echo '3rd step finished. No hetero region detected.'; else echo 'Hetero region detected.';
+for file in ${input_fastq2nd_dir}/*fastq*; do
 	file=`basename $file`;
 	name=`echo ${file}`;
-	$minimap2 -x ava-${lr} ${input_fastq_dir}/$file ${input_fastq_dir}/$file > ${dir1}/${name}.out1;
+	$minimap2 -x ava-${lr} ${input_fastq2nd_dir}/$file ${input_fastq2nd_dir}/$file > ${dir2}/${file}.out1;
 	echo fastq file  : $file;
-	echo region name : $name;
-	echo "Runnig command: python3 ${code_dir}/EsS.py ${input_fastq_dir}/$file ${dir1}/${name}.out1 0.04 ${block} ${step} ${ess_min_cov_block} ${ess_lower_x_percent_discard} ${dir1} ${ess_paf_clean_match_base_number_lower}";
-	python3 ${code_dir}/EsS2.py ${input_fastq_dir}/$file ${dir1}/${name}.out1 0.04 ${block} ${step} ${ess_min_cov_block} ${ess_lower_x_percent_discard} ${dir1} ${ess_paf_clean_match_base_number_lower};
-	for file2 in ${dir1}/${name}.out2.*; do
+	#echo region name : $name;
+	echo "Runnig command: python3 ${code_dir}/EsS2.py ${input_fastq2nd_dir}/$file ${dir2}/${file}.out1 0.04 ${block} ${step} ${ess_min_cov_block} ${ess_lower_x_percent_discard} ${dir2} ${ess_paf_clean_match_base_number_lower}";
+	python3 ${code_dir}/EsS2.py ${input_fastq2nd_dir}/$file ${dir2}/${file}.out1 0.04 ${block} ${step} ${ess_min_cov_block} ${ess_lower_x_percent_discard} ${dir2} ${ess_paf_clean_match_base_number_lower};
+	for file2 in ${dir2}/${file}.out2.*; do
 		file2=`basename $file2`;
 		number=`echo ${file2}| rev`; number=(${number//./ }); number=`echo ${number[0]}| rev`;
 		name2=`echo ${file2}| sed -e "s/out2.${number}/out3.${number}/"`;
-		$mafft --op 0 --ep 1 --thread 8 --threadit 0 ${dir1}/$file2 > ${dir1}/$name2;
+		$mafft --op 0 --ep 1 --thread 8 --threadit 0 ${dir2}/$file2 > ${dir2}/$name2;
 	done;
-	for file3 in ${dir1}/${name}.out3.*; do
+	for file3 in ${dir2}/${file}.out3.*; do
 		file3=`basename $file3`;
-		python3 ${code_dir}/LGS3.py ${dir1}/${file3} ${dir1} ${dir1} ${block};
+		python3 ${code_dir}/LGS3.py ${dir2}/${file3} ${dir2} ${dir2} ${block};
 	done;
-	for file7 in ${dir1}/${name}.out7.*; do
+	for file7 in ${dir2}/${file}.out7.*; do
 		file7=`basename $file7`;
 		number=`echo ${file7}| rev`; number=(${number//./ }); number=`echo ${number[0]}| rev`;
 		name8=`echo ${file7}| sed -e "s/out7.${number}/out8.${number}/"`;
-		echo "Running command: $mafft --op 0 --ep 1 --thread 8 --threadit 0 ${dir1}/$file7 > ${dir1}/${name8}";
-		$mafft --op 0 --ep 1 --thread 8 --threadit 0 ${dir1}/$file7 > ${dir1}/${name8};
+		echo "Running command: $mafft --op 0 --ep 1 --thread 8 --threadit 0 ${dir2}/$file7 > ${dir2}/${name8}";
+		$mafft --op 0 --ep 1 --thread 8 --threadit 0 ${dir2}/$file7 > ${dir2}/${name8};
 	done;
-	for file8 in ${dir1}/${name}.out8.*; do
+	for file8 in ${dir2}/${file}.out8.*; do
 		file8=`basename $file8`;
 		number=`echo ${file8}| rev`; number=(${number//./ }); number=`echo ${number[0]}| rev`;
 		name4=`echo ${file8}| sed -e "s/out8.${number}/out4.${number}/"`;
-		python3 ${code_dir}/SCM2.py ${input_fastq_dir}/$file ${dir1}/$file8 0.6 0.5 0.4 ${dir1}/${name4};
+		python3 ${code_dir}/SCM2.py ${input_fastq2nd_dir}/$file ${dir2}/$file8 0.6 0.5 0.4 ${dir2}/${name4};
 	done;
 
-	rm ${dir1}/${name}*out2*
-	rm ${dir1}/${name}*out3*
-	rm ${dir1}/${name}*out7*
+	rm ${dir2}/${file}*out2*
+	rm ${dir2}/${file}*out3*
+	rm ${dir2}/${file}*out7*
 	
-	cnt_out4=`ls -1 ${dir1}/${name}.out4.*| wc -l`;
-	python3 ${code_dir}/RCS2.py ${dir1}/${name} ${cnt_out4} ${block} ${step} $mafft;
-	rm ${dir1}/${name}*out8*
+	cnt_out4=`ls -1 ${dir2}/${name}.out4.*| wc -l`;
+	python3 ${code_dir}/RCS2.py ${dir2}/${file} ${cnt_out4} ${block} ${step} $mafft;
+	rm ${dir2}/${file}*out8*
 done
+fi
 time4=`date +%s`
-
 
 time_firstCS=$((time2-time1))
 time_readSep=$((time3-time2))
