@@ -100,6 +100,10 @@ for file in ${input_fastq_dir}/*fastq; do
 	cnt_out4=`ls -1 ${dir1}/${name}.out4.*| wc -l`;
 	python3 ${code_dir}/RCS2.py ${dir1}/${name} ${cnt_out4} ${block} ${step} $mafft;
 	rm ${dir1}/${name}*out8*
+	rm ${dir1}/*.concat.*
+	rm ${dir1}/*.out4.*
+	rm ${dir1}/*.out4a.*
+	rm ${dir1}/*.tail_head.*
 done
 
 time2=`date +%s`
@@ -159,6 +163,10 @@ for file in ${input_fastq2nd_dir}/*fastq*; do
 	cnt_out4=`ls -1 ${dir2}/${name}.out4.*| wc -l`;
 	python3 ${code_dir}/RCS2.py ${dir2}/${file} ${cnt_out4} ${block} ${step} $mafft;
 	rm ${dir2}/${file}*out8*
+	rm ${dir2}/*.concat.*
+	rm ${dir2}/*.out4.*
+	rm ${dir2}/*.out4a.*
+	rm ${dir2}/*.tail_head.*
 done
 fi
 time4=`date +%s`
