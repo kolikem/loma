@@ -172,7 +172,7 @@ fi
 time4=`date +%s`
 
 mv ${dir1}/*.cs ${CONSENSUS}
-mv ${dir2}/*.cs ${CONSENSUS}
+if [ -e ${dir2}/*.cs ]; then mv ${dir2}/*.cs ${CONSENSUS}; fi
 
 time_firstCS=$((time2-time1))
 time_readSep=$((time3-time2))
