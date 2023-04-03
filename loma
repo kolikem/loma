@@ -45,8 +45,8 @@ if [ "$flg_m" = "TRUE" ]; then echo "-m defined: " $ess_paf_clean_match_base_num
 else ess_paf_clean_match_base_number_lower=1000; echo "-m not defined. default value is used: " $ess_paf_clean_match_base_number_lower; fi
 
 
-curdir=`pwd` #; code_dir=${curdir}/src									# script directory
-code_dir=`dirname $0`/src
+curdir=`pwd`
+code_dir=`dirname $0`/loma_src
 cd ${DIR}
 dir1=${DIR}/dir1
 mkdir ${dir1}
