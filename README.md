@@ -16,13 +16,18 @@ fastq file
 ### Output
 fasta file
 ### Usage
-You can download all sources by git clone.
+A user can download all sources by git clone.
 ```sh
 $ git clone https://github.com/kolikem/loma
 ```
-For general usage for reconstructions of localized genomic regions, a user can run LoMA by:
+Then you execute SETUP as follows.
 ```sh
-$ sh loma.sh -I <INPUT> -O <OUTPUT>
+$ cd loma
+$ sh SETUP.sh
+```
+Now you are ready to use the tool. For general usage for reconstructions of localized genomic regions, a user can run LoMA by:
+```sh
+$ loma -I <INPUT> -O <OUTPUT>
 ```
 INPUT is a directory designated by a user, which is supposed to include fastq file(s) from localized regions.
 OUTPUT is also a directory defined by a user and will have three directories newly made: CONSENSUS, dir1, dir2. Final CSs are put in CONSENSUS directory with extension of .cs (fasta).
