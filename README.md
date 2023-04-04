@@ -15,7 +15,7 @@ Typically, LoMA takes 10-1000 reads.
 ### Input
 fastq file
 ### Output
-fasta file
+fasta file (.cs)
 ### Usage
 A user can download all sources by git clone.
 ```sh
@@ -61,7 +61,7 @@ LoMA runs with the following parameters:
 
 ## Dependency
 minimap2 ver.2.0 <=  
-MAFFT ver.7 <=
+MAFFT ver.7 <=  
 numpy
 
 ## Reference
