@@ -3,11 +3,12 @@
 ## Summary
 Overview:  
 LoMA is a localized assembly tool for long reads.  
-It starts with interpretations of the all-to-all alignment to your ROI. LoMA lays out long reads after some filterations. It divides the layout into multiple blocks to make partial consensus sequences. They will be contatenated into one consensus sequence.
+It starts with interpretations of the all-to-all alignment to a region of interest. LoMA lays out long reads after some filterations. It divides the layout into multiple blocks to make partial consensus sequences. They will be contatenated into one consensus sequence.
 
 Note:  
 The current version is optimized for ONT reads although it can also be used for PacBio data.  
-The following instructions assume users use UNIX-like OS. LoMA needs minimap2 (Heng Li) and MAFFT (Katoh et al.), so users please install them beforehand.  
+The following instructions assume users of linux-like OS. Users who use Windows are recommended to use WSL to run commands.  
+LoMA needs minimap2 (Heng Li) and MAFFT (Katoh et al.), so users please install them beforehand.  
 Typically, LoMA takes 10-1000 reads.
 
 ## Guidance
@@ -61,6 +62,7 @@ LoMA runs with the following parameters:
 ## Dependency
 minimap2 ver.2.0 <=  
 MAFFT ver.7 <=
+numpy
 
 ## Reference
 Ikemoto, K., Fujimoto, H. & Fujimoto, A. Localized assembly for long reads enables genome-wide analysis of repetitive regions at single-base resolution in human genomes. Hum Genomics 17, 21 (2023). https://doi.org/10.1186/s40246-023-00467-7
