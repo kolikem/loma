@@ -60,7 +60,7 @@ LoMA runs with the following parameters:
 -K: <PATH> MAFFT (Katoh et al.). If you have not set the path.  
 
 ## Dependency
-python 3.8 <=
+python 3.8 <=  
 minimap2 ver.2.0 <=  
 MAFFT ver.7 <=  
 numpy
