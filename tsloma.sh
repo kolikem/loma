@@ -46,7 +46,7 @@ else ess_paf_clean_match_base_number_lower=1000; echo "-m not defined. default v
 
 
 curdir=`pwd`
-code_dir=`dirname $0`/loma_src
+code_dir=`dirname $0`/tsloma_src
 cd ${DIR}
 dir1=${DIR}/dir1
 mkdir ${dir1}

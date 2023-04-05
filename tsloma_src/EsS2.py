@@ -282,41 +282,64 @@ numPaf = len(paf_name1)     # Renew number of PAF data.
 # 関数定義
 # match: 一致塩基数 --> default >= 500
 # div: sequence divergence --> default < 0.1
-def Cleansing_by_MatchBase_SeqDiv(match, div, paf_data):
-	idx = []
+
+#Coefficient of Variation (CV)
+def CV(data):
+    cv_alnlen = np.std([float(i) for i in data[10]]) / np.mean([float(i) for i in data[10]])
+    return cv_alnlen
+
+def TS_match_parameter_class(match, div, cv, paf_data):
+    half_mean_matchlen = np.mean([float(i) for i in paf_data[9]]) * 0.5
+
+    # small alignment-length variation --> full-length transcript covered by reads
+    if cv < 0.1:
+        print("small case: filter of #matching bases is based on dynamic cut.")
+        idx = []
+        for i in range(len(paf_data[0])):
+            if int(paf_data[9][i]) < half_mean_matchlen:    # match base (dynamic cut)
+                idx.append(i)
+            if float(paf_data[11][i]) > float(div)          # sequence divergence
+                idx.append(i)
+        new_paf = np.delete(paf_data, idx, axis=1)
+
+    # big alignment-length variation --> only partial transcript covered by reads
+    else:
+        print("large case: filter of #matching bases is based on hard cut (-m parameter).")
+        idx = []
 	for i in range(len(paf_data[0])):
-		if int(paf_data[9][i]) < int(match):		# match base
-			idx.append(i)
-		if float(paf_data[11][i]) >= float(div):	# sequence divergence
-			idx.append(i)
-	
+            if int(paf_data[9][i]) < int(match):	# match base (hard cut)
+	        idx.append(i)
+	    if float(paf_data[11][i]) > float(div):	# sequence divergence
+		idx.append(i)
 	new_paf = np.delete(paf_data, idx, axis=1)
-	return new_paf
+
+    return new_paf
+
 
 
 ######ここまではデータの成型######
 
 # ここまでにフィルターされたpafデータを行列にして格納
-# PAF_data
-# [ ["read1-1", "read2-1", "raed3-1"],
-#   [100,       500,       200      ],
-#   [300,       1000,      1500     ],
-#   ["read1-2", "read2-2", "read3-2"],
-#   [900,       400,       0        ],
-#   [1100,      900,       1300     ],
-#   [1,         -1,        1        ],
-#   [3000,      2000,      5000     ],
-#   [2000,      1200,      1400     ],
-#   [length_1],
-#   [length_2],
-#   [paf_matchBase],
-#   [paf_alnLen],
-#   [paf_seqDiv]		    ]
+# ------------- PAF_data -------------
+# [ ["read1-1", "read2-1", "raed3-1"],  #col 1
+#   [100,       500,       200      ],  #col 2
+#   [300,       1000,      1500     ],  #col 3
+#   ["read1-2", "read2-2", "read3-2"],  #col 4
+#   [900,       400,       0        ],  #col 5
+#   [1100,      900,       1300     ],  #col 6
+#   [1,         -1,        1        ],  #col 7
+#   [3000,      2000,      5000     ],  #col 8
+#   [2000,      1200,      1400     ],  #col 9
+#   [paf_matchBase],                    #col 10
+#   [paf_alnLen],                       #col 11
+#   [paf_seqDiv]                    ]   #col 12
+
 PAF_data = np.array([paf_name1, paf_start1, paf_end1, paf_name2, paf_start2, paf_end2, paf_relative, length_1, length_2, paf_matchBase, paf_alnLen, paf_seqDiv])
-PAF_data = Cleansing_by_MatchBase_SeqDiv(int(sys.argv[9]), 0.1, PAF_data)
+CV_alnlen = CV(PAF_data)
+print("CV =", CV_alnlen)
+PAF_data = TS_match_parameter_class(int(sys.argv[9]), 0.1, CV_alnlen, PAF_data)
 numPaf = len(PAF_data[0])
-#print("PAF_data", PAF_data)
-#print("numPaf", numPaf)
+print("PAF_data", PAF_data)
 
 
 
@@ -327,6 +350,14 @@ def IdxSortPaf_by_aln_len(paf_data):
 	paf_data_sort = paf_data[:, aln_len_l.argsort()]
 	paf_data_sort = np.flip(paf_data_sort, axis=1)
 	return paf_data_sort
+
+
+
+
+
+
+
+
 
 
 ######ここからは重ね合わせ######
