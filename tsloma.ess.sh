@@ -1,0 +1,73 @@
+#!/bin/bash
+
+time1=`date +%s`
+
+while getopts I:O:b:s:h:d:l:c:r:m:H:K: OPT
+do
+	case $OPT in
+		"I") flg_I="TRUE"; input_fastq_dir=$OPTARG;;
+		"O") flg_O="TRUE"; DIR=$OPTARG;;
+		"b") flg_b="TRUE"; block=$OPTARG;;
+		"s") flg_s="TRUE"; step=$OPTARG;;
+		"h") flg_h="TRUE"; hashicut=$OPTARG;;
+		"d") flg_d="TRUE"; n_sigma=$OPTARG;;
+		"l") flg_l="TRUE"; lr=$OPTARG;;
+		"c") flg_c="TRUE"; ess_min_cov_block=$OPTARG;;
+		"r") flg_r="TRUE"; ess_lower_x_percent_discard=$OPTARG;;
+		"m") flg_m="TRUE"; ess_paf_clean_match_base_number_lower=$OPTARG;;
+		"H") flg_H="TRUE"; minimap2=$OPTARG;;
+		"K") flg_K="TRUE"; mafft=$OPTARG;;
+	esac
+done
+
+
+if [ "$flg_H" = "TRUE" ]; then echo "-H defined: " $minimap2
+else minimap2="minimap2"; echo "-H not defined"; fi
+if [ "$flg_K" = "TRUE" ]; then echo "-K defined: " $mafft
+else mafft="mafft"; echo "-K not defined"; fi
+if [ "$flg_I" = "TRUE" ]; then echo "-I defined: " $input_fastq_dir; fi
+if [ "$flg_O" = "TRUE" ]; then echo "-O defined: " $DIR; fi
+if [ "$flg_b" = "TRUE" ]; then echo "-b defined: " $block
+else block=3000; echo "-b not defined. default value is used: " $block; fi
+if [ "$flg_s" = "TRUE" ]; then echo "-s defined: " $step
+else step=2000; echo "-s not defined. default value is used: " $step; fi
+if [ "$flg_h" = "TRUE" ]; then echo "-h defined: " $hashicut
+else hashicut=10; echo "-h not defined. default value is used: " $hashicut; fi
+if [ "$flg_d" = "TRUE" ]; then echo "-d defined: " $n_sigma
+else n_sigma=3; echo "-d not defined. default value is used: " $n_sigma; fi
+if [ "$flg_l" = "TRUE" ]; then echo "-l defined: " $lr
+else lr="ont"; echo "-l not defined. default value is used: " $lr; fi
+if [ "$flg_c" = "TRUE" ]; then echo "-c defined: " $ess_min_cov_block
+else ess_min_cov_block=0.7; echo "-c not defined. default value is used: " $ess_min_cov_block; fi
+if [ "$flg_r" = "TRUE" ]; then echo "-r defined: " $ess_lower_x_percent_discard
+else ess_lower_x_percent_discard=0.5; echo "-r not defined. default value is used: " $ess_lower_x_percent_discard; fi
+if [ "$flg_m" = "TRUE" ]; then echo "-m defined: " $ess_paf_clean_match_base_number_lower
+else ess_paf_clean_match_base_number_lower=1000; echo "-m not defined. default value is used: " $ess_paf_clean_match_base_number_lower; fi
+
+
+curdir=`pwd`
+code_dir=`dirname $0`/tsloma_src
+cd ${DIR}
+dir1=${DIR}/dir1
+mkdir ${dir1}
+dir2=${DIR}/dir2
+mkdir ${dir2}
+CONSENSUS=${DIR}/CONSENSUS
+mkdir ${CONSENSUS}
+input_fastq2nd_dir=${dir2}/fastq2nd
+mkdir ${input_fastq2nd_dir}
+abso=0
+
+
+# Step1. 1st-CS.
+cd ${dir1}
+for file in ${input_fastq_dir}/*fastq; do
+	file=`basename $file`;
+	name=`echo ${file}`;
+	$minimap2 -x ava-${lr} ${input_fastq_dir}/$file ${input_fastq_dir}/$file > ${dir1}/${name}.out1;
+	echo fastq file  : $file;
+	echo region name : $name;
+	echo "Runnig command: python3 ${code_dir}/EsS.py ${input_fastq_dir}/$file ${dir1}/${name}.out1 0.04 ${block} ${step} ${ess_min_cov_block} ${ess_lower_x_percent_discard} ${dir1} ${ess_paf_clean_match_base_number_lower}";
+	python3 ${code_dir}/EsS2.py ${input_fastq_dir}/$file ${dir1}/${name}.out1 0.04 ${block} ${step} ${ess_min_cov_block} ${ess_lower_x_percent_discard} ${dir1} ${ess_paf_clean_match_base_number_lower};
+done
+

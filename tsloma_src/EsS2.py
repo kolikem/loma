@@ -298,7 +298,7 @@ def TS_match_parameter_class(match, div, cv, paf_data):
         for i in range(len(paf_data[0])):
             if int(paf_data[9][i]) < half_mean_matchlen:    # match base (dynamic cut)
                 idx.append(i)
-            if float(paf_data[11][i]) > float(div)          # sequence divergence
+            if float(paf_data[11][i]) > float(div):         # sequence divergence
                 idx.append(i)
         new_paf = np.delete(paf_data, idx, axis=1)
 
@@ -306,12 +306,12 @@ def TS_match_parameter_class(match, div, cv, paf_data):
     else:
         print("large case: filter of #matching bases is based on hard cut (-m parameter).")
         idx = []
-	for i in range(len(paf_data[0])):
+        for i in range(len(paf_data[0])):
             if int(paf_data[9][i]) < int(match):	# match base (hard cut)
-	        idx.append(i)
-	    if float(paf_data[11][i]) > float(div):	# sequence divergence
-		idx.append(i)
-	new_paf = np.delete(paf_data, idx, axis=1)
+                idx.append(i)
+            if float(paf_data[11][i]) > float(div):	# sequence divergence
+                idx.append(i)
+        new_paf = np.delete(paf_data, idx, axis=1)
 
     return new_paf
 
