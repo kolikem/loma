@@ -292,7 +292,7 @@ def TS_match_parameter_class(match, div, cv, paf_data):
     half_mean_matchlen = np.mean([float(i) for i in paf_data[9]]) * 0.5
 
     # small alignment-length variation --> full-length transcript covered by reads
-    if cv < 0.1:
+    if cv < 0.1:    # 0.1 is hyperparameter
         print("small case: filter of #matching bases is based on dynamic cut.")
         idx = []
         for i in range(len(paf_data[0])):
@@ -301,6 +301,7 @@ def TS_match_parameter_class(match, div, cv, paf_data):
             if float(paf_data[11][i]) > float(div):         # sequence divergence
                 idx.append(i)
         new_paf = np.delete(paf_data, idx, axis=1)
+        long_short = "short"
 
     # big alignment-length variation --> only partial transcript covered by reads
     else:
@@ -312,8 +313,9 @@ def TS_match_parameter_class(match, div, cv, paf_data):
             if float(paf_data[11][i]) > float(div):	# sequence divergence
                 idx.append(i)
         new_paf = np.delete(paf_data, idx, axis=1)
+        long_short = "long"
 
-    return new_paf
+    return new_paf, long_short
 
 
 
@@ -337,9 +339,9 @@ def TS_match_parameter_class(match, div, cv, paf_data):
 PAF_data = np.array([paf_name1, paf_start1, paf_end1, paf_name2, paf_start2, paf_end2, paf_relative, length_1, length_2, paf_matchBase, paf_alnLen, paf_seqDiv])
 CV_alnlen = CV(PAF_data)
 print("CV =", CV_alnlen)
-PAF_data = TS_match_parameter_class(int(sys.argv[9]), 0.1, CV_alnlen, PAF_data)
+PAF_data, LS = TS_match_parameter_class(int(sys.argv[9]), 0.1, CV_alnlen, PAF_data)     # divergence = 0.1
 numPaf = len(PAF_data[0])
-print("PAF_data", PAF_data)
+#print("PAF_data", PAF_data)
 
 
 
@@ -781,7 +783,7 @@ for l in range(numFq):
 
 
 
-'''（８）可視化'''
+'''（８）visualization'''
 import matplotlib.pyplot as plt
 
 nonZero = []
@@ -833,100 +835,113 @@ path_file = sys.argv[8]
 fastq_path = sys.argv[1]
 pos_name = os.path.basename(fastq_path)
 
-file_cnt = 0
-while minimum + stepSize*cnt + blockSize-1 < maximum:
-    cnt_reads = 0
-    file_cnt += 1
-    file_name = f'{pos_name}.out2.{file_cnt}'
+if LS == "short":
+    print("type=short\tThis transcript is fully covered by a read.")
+    file_name = f'{pos_name}.out2'
     s = ''
-
-    blockRange = (minimum + stepSize*cnt, minimum + stepSize*cnt + blockSize-1)
     for i in range(numFq):
         if not i in vacancies:
-            if blockRange[0] <= placement[i][1] and placement[i][0] <= blockRange[1]:   #かかる条件
-                if placement[i][0] <= blockRange[0]:            # リード始まりがブロック左端より左
-                    if blockRange[1] <= placement[i][1]:                # (1) リード終わりがブロック右端より右
-                        start_i = blockRange[0] - placement[i][0]   # (0-origin index)
-                        end_i = start_i + blockSize - 1
-                        
-                    else:                                               # (2) リード終わりがブロック右端より左
-                        start_i = blockRange[0] - placement[i][0]
-                        end_i = placement[i][1] - placement[i][0] - 1
-
-                                                                # リード始まりがブロック左端より右
-                elif blockRange[1] <= placement[i][1]:                  # (3) リード終わりがブロック右端より右
-                    start_i = 0
-                    end_i = blockRange[1] - placement[i][0] - 1
-
-                else:                                                   # (4) リード終わりがブロック右端より左
-                    start_i = 0
-                    end_i = placement[i][1] - placement[i][0]
-
-                readSize = end_i - start_i + 1
-                if (readSize / blockSize) >= rmv:
-                    s += f'>{fq_name[i]}\t{(start_i, end_i)}\t{plusMinus[i]}\n'
-                    seq = fq_seq[i]
-                    s += f'{seq[start_i:end_i+1]}\n'
-
-                    cnt_reads += 1
-
-    if cnt_reads == 1:  #次ステップでmafftのエラーを避けるためにリード数１本のブロックは名前を変更しておく(subconsensus終了状態にする) 
-        file_name = f'{pos_name}.out4.{file_cnt}'
-        name = f'>{pos_name}_{file_cnt}\t1'    #'1'はリード数
-        m_seq = re.search(r'\n(A|T|G|C)*\n', s)
-        seq = m_seq.group()[1:-1]
-        seq = seq.lower()
-        s = name + '\n' + seq + '\n'
-
-    with open(f'{path_file}/{file_name}', mode='w') as f:
+            s += f'>{fq_name[i]}\t(*,*)\t{plusMinus[i]}\n'
+            s += f'{fq_seq[i]}\n'
+    with open(path_file+"/"+file_name, mode="w") as f:
         f.write(s)
 
-    cnt += 1
+elif LS == "long":
+    print("type=long\tThis transcript is fragmentarily covered by multiple reads.")
+    file_cnt = 0
+    while minimum + stepSize*cnt + blockSize-1 < maximum:
+        cnt_reads = 0
+        file_cnt += 1
+        file_name = f'{pos_name}.out2.{file_cnt}'
+        s = ''
 
-else:	# 右端までファイルを作成する.
-    cnt_reads = 0
-    file_cnt += 1
-    file_name = f'{pos_name}.out2.{file_cnt}'
-    s = ''
+        blockRange = (minimum + stepSize*cnt, minimum + stepSize*cnt + blockSize-1)
+        for i in range(numFq):
+            if not i in vacancies:
+                if blockRange[0] <= placement[i][1] and placement[i][0] <= blockRange[1]:   #かかる条件
+                    if placement[i][0] <= blockRange[0]:            # リード始まりがブロック左端より左
+                        if blockRange[1] <= placement[i][1]:                # (1) リード終わりがブロック右端より右
+                            start_i = blockRange[0] - placement[i][0]   # (0-origin index)
+                            end_i = start_i + blockSize - 1
+                            
+                        else:                                               # (2) リード終わりがブロック右端より左
+                            start_i = blockRange[0] - placement[i][0]
+                            end_i = placement[i][1] - placement[i][0] - 1
 
-    blockRange = (minimum + stepSize*cnt, maximum)
-    for i in range(numFq):
-        if not i in vacancies:
-            if blockRange[0] <= placement[i][1] and placement[i][0] <= blockRange[1]:   #かかる条件
-                if placement[i][0] <= blockRange[0]:            # リード始まりがブロック左端より左
-                    if blockRange[1] <= placement[i][1]:                # (1) リード終わりがブロック右端より右
-                        start_i = blockRange[0] - placement[i][0]   # (0-origin index)
-                        end_i = start_i + blockSize - 1
-                        
-                    else:                                               # (2) リード終わりがブロック右端より左
-                        start_i = blockRange[0] - placement[i][0]
-                        end_i = placement[i][1] - placement[i][0] - 1
+                                                                    # リード始まりがブロック左端より右
+                    elif blockRange[1] <= placement[i][1]:                  # (3) リード終わりがブロック右端より右
+                        start_i = 0
+                        end_i = blockRange[1] - placement[i][0] - 1
 
-                                                                # リード始まりがブロック左端より右
-                elif blockRange[1] <= placement[i][1]:                  # (3) リード終わりがブロック右端より右
-                    start_i = 0
-                    end_i = blockRange[1] - placement[i][0] - 1
+                    else:                                                   # (4) リード終わりがブロック右端より左
+                        start_i = 0
+                        end_i = placement[i][1] - placement[i][0]
 
-                else:                                                   # (4) リード終わりがブロック右端より左
-                    start_i = 0
-                    end_i = placement[i][1] - placement[i][0]
+                    readSize = end_i - start_i + 1
+                    if (readSize / blockSize) >= rmv:
+                        s += f'>{fq_name[i]}\t{(start_i, end_i)}\t{plusMinus[i]}\n'
+                        seq = fq_seq[i]
+                        s += f'{seq[start_i:end_i+1]}\n'
 
-                readSize = end_i - start_i + 1
-                if (readSize / blockSize) >= rmv:
-                    s += f'>{fq_name[i]}\t{(start_i, end_i)}\t{plusMinus[i]}\n'
-                    seq = fq_seq[i]
-                    s += f'{seq[start_i:end_i+1]}\n'
+                        cnt_reads += 1
 
-                    cnt_reads += 1
+        if cnt_reads == 1:  #次ステップでmafftのエラーを避けるためにリード数１本のブロックは名前を変更しておく(subconsensus終了状態にする) 
+            file_name = f'{pos_name}.out4.{file_cnt}'
+            name = f'>{pos_name}_{file_cnt}\t1'    #'1'はリード数
+            m_seq = re.search(r'\n(A|T|G|C)*\n', s)
+            seq = m_seq.group()[1:-1]
+            seq = seq.lower()
+            s = name + '\n' + seq + '\n'
 
-    if cnt_reads == 1:  #次ステップでmafftのエラーを避けるためにリード数１本のブロックは名前を変更しておく(subconsensus終了状態にする) 
-        file_name = f'{pos_name}.out4.{file_cnt}'
-        name = f'>{pos_name}_{file_cnt}\t1'    #'1'はリード数
-        m_seq = re.search(r'\n(A|T|G|C)*\n', s)
-        seq = m_seq.group()[1:-1]
-        seq = seq.lower()
-        s = name + '\n' + seq + '\n'
+        with open(f'{path_file}/{file_name}', mode='w') as f:
+            f.write(s)
 
-    with open(f'{path_file}/{file_name}', mode='w') as f:
-        f.write(s)
+        cnt += 1
+
+    else:	# 右端までファイルを作成する.
+        cnt_reads = 0
+        file_cnt += 1
+        file_name = f'{pos_name}.out2.{file_cnt}'
+        s = ''
+
+        blockRange = (minimum + stepSize*cnt, maximum)
+        for i in range(numFq):
+            if not i in vacancies:
+                if blockRange[0] <= placement[i][1] and placement[i][0] <= blockRange[1]:   #かかる条件
+                    if placement[i][0] <= blockRange[0]:            # リード始まりがブロック左端より左
+                        if blockRange[1] <= placement[i][1]:                # (1) リード終わりがブロック右端より右
+                            start_i = blockRange[0] - placement[i][0]   # (0-origin index)
+                            end_i = start_i + blockSize - 1
+                            
+                        else:                                               # (2) リード終わりがブロック右端より左
+                            start_i = blockRange[0] - placement[i][0]
+                            end_i = placement[i][1] - placement[i][0] - 1
+
+                                                                    # リード始まりがブロック左端より右
+                    elif blockRange[1] <= placement[i][1]:                  # (3) リード終わりがブロック右端より右
+                        start_i = 0
+                        end_i = blockRange[1] - placement[i][0] - 1
+
+                    else:                                                   # (4) リード終わりがブロック右端より左
+                        start_i = 0
+                        end_i = placement[i][1] - placement[i][0]
+
+                    readSize = end_i - start_i + 1
+                    if (readSize / blockSize) >= rmv:
+                        s += f'>{fq_name[i]}\t{(start_i, end_i)}\t{plusMinus[i]}\n'
+                        seq = fq_seq[i]
+                        s += f'{seq[start_i:end_i+1]}\n'
+
+                        cnt_reads += 1
+
+        if cnt_reads == 1:  #次ステップでmafftのエラーを避けるためにリード数１本のブロックは名前を変更しておく(subconsensus終了状態にする) 
+            file_name = f'{pos_name}.out4.{file_cnt}'
+            name = f'>{pos_name}_{file_cnt}\t1'    #'1'はリード数
+            m_seq = re.search(r'\n(A|T|G|C)*\n', s)
+            seq = m_seq.group()[1:-1]
+            seq = seq.lower()
+            s = name + '\n' + seq + '\n'
+
+        with open(f'{path_file}/{file_name}', mode='w') as f:
+            f.write(s)
 

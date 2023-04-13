@@ -12,9 +12,7 @@ import matplotlib.pyplot as plt
 print("imported modules")
 
 # sys.argv[1] - mafft output (out3)
-# sys.argv[2] - 結果図格納場所
-# sys.argv[3] - 分類後fastaファイル保存ディレクトリ
-# sys.argv[4] - ブロックサイズ
+# sys.argv[2] - 結果図格納場所・分類後fastaファイル保存ディレクトリ
 
 def preprocess():
     f = open(sys.argv[1])	# e.g. ST3GAL3_novel_0_ATL7.fastq.out3.2
@@ -130,7 +128,7 @@ if __name__ == "__main__":
 	
 	if len(names) < divide:
 		print("The number of this file < "+str(divide)+". Error reads are NOT explored.")
-		end_due_to_small_read_number(sys.argv[1], sys.argv[3], len(names), names, reads)
+		end_due_to_small_read_number(sys.argv[1], sys.argv[2], len(names), names, reads)
 
 	else:
 		print("The number of this file < "+str(divide)+". Error reads are being explored.")
@@ -141,6 +139,6 @@ if __name__ == "__main__":
 		print("length of aligned length: ", len(reads[0]))
 
 		print_deviated_reads(idx_detected, names)			# ｴﾗｰﾘｰﾄﾞ名を出力
-		save_non_error_reads_as_fasta(sys.argv[1], sys.argv[3], names, reads, idx_detected)	# 非ｴﾗｰﾘｰﾄﾞをfastaで保存
+		save_non_error_reads_as_fasta(sys.argv[1], sys.argv[2], names, reads, idx_detected)	# 非ｴﾗｰﾘｰﾄﾞをfastaで保存
 
 
