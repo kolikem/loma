@@ -44,9 +44,8 @@ else ess_lower_x_percent_discard=0.5; echo "-r not defined. default value is use
 if [ "$flg_m" = "TRUE" ]; then echo "-m defined: " $ess_paf_clean_match_base_number_lower
 else ess_paf_clean_match_base_number_lower=1000; echo "-m not defined. default value is used: " $ess_paf_clean_match_base_number_lower; fi
 
-
-curdir=`pwd`
-code_dir=`dirname $0`/loma_src
+code_dir=$(cd $(dirname $0);pwd)/loma_src
+echo "code directory" ${code_dir}
 cd ${DIR}
 dir1=${DIR}/dir1
 mkdir ${dir1}
@@ -172,7 +171,8 @@ fi
 time4=`date +%s`
 
 mv ${dir1}/*.cs ${CONSENSUS}
-if [ -e ${dir2}/*.cs ]; then mv ${dir2}/*.cs ${CONSENSUS}; fi
+ls ${dir2}/*.cs > /dev/null 2>&1
+if [ $? -eq 0 ];then mv ${dir2}/*.cs ${CONSENSUS}; fi
 
 time_firstCS=$((time2-time1))
 time_readSep=$((time3-time2))
