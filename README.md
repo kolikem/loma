@@ -17,21 +17,29 @@ fastq file
 ### Output
 fasta file (.cs)
 ### Usage
-A user can download all sources by git clone.
+A user can download all source files by git clone.
 ```sh
 $ git clone https://github.com/kolikem/loma
 ```
-Then you execute SETUP as follows.
+Then go to the directory loma.
 ```sh
 $ cd loma
+```
+(case 1) You can run LoMA after executing SETUP.sh, which is for the establishment of the path.
+```sh
 $ sh SETUP.sh
 ```
 Now you are ready to use the tool. For general usage for reconstructions of localized genomic regions, a user can run LoMA by:
 ```sh
-$ loma -I <INPUT> -O <OUTPUT>
+$ loma -I <INPUT> -O <OUTPUT> -H <minimap2> -K <mafft>
+```
+(case 2) You can run LoMA without using SETUP.sh just by running the sh file.
+```sh
+$ sh loma -I <INPUT> -O <OUTPUT> -H <minimap2> -K <mafft>
 ```
 INPUT is a directory designated by a user, which is supposed to include fastq file(s) from localized regions.
 OUTPUT is also a directory defined by a user and will have three directories newly made: CONSENSUS, dir1, dir2. Final CSs are put in CONSENSUS directory with extension of .cs (fasta).
+H and K are not necessary if their paths are reachable.
 ### Parameters
 LoMA runs with the following parameters:  
   
@@ -60,9 +68,9 @@ LoMA runs with the following parameters:
 -K: <PATH> MAFFT (Katoh et al.). If you have not set the path.  
 
 ## Dependency
-python 3.8 <=  
-minimap2 ver.2.0 <=  
-MAFFT ver.7 <=  
+python >= 3.8  
+minimap2 >= ver.2.0  
+MAFFT >= ver.7  
 numpy
 
 ## Reference
