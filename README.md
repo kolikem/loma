@@ -37,15 +37,15 @@ $ loma -I <INPUT> -O <OUTPUT> -H <minimap2> -K <mafft>
 ```sh
 $ sh loma -I <INPUT> -O <OUTPUT> -H <minimap2> -K <mafft>
 ```
-INPUT is a directory designated by a user, which is supposed to include fastq file(s) from localized regions.
-OUTPUT is also a directory defined by a user and will have three directories newly made: CONSENSUS, dir1, dir2. Final CSs are put in CONSENSUS directory with extension of .cs (fasta).
+INPUT is a directory designated by a user, which is supposed to include fastq file(s) from localized regions. Please make sure that INPUT is an absolute path. 
+OUTPUT is also a directory defined by a user and will have three directories newly made; CONSENSUS, dir1, dir2. Final CSs are put in CONSENSUS directory with extension of .cs (fasta). Please make sure that OUTPUT is an absolute path as well.  
 H and K are not necessary if their paths are reachable.
 ### Parameters
 LoMA runs with the following parameters:  
   
--I: <PATH> input directory. LoMA takes FASTQ files as input data. Please make an input directory inclusing FASTQ files for which you want to obtain consensus sequences. Only one file in the directory works.  
+-I: <PATH> input directory (absolute path). LoMA takes FASTQ files as input. Please make an input directory which contains at least one FASTQ file for which you want to obtain consensus sequence(s).   
   
--O: <PATH> output directory. LoMA generates a consensus sequence for each region in input FASTQ files. The final sequences will be stored in a directory named "CONSENSUS", which is automatically made in the process.  
+-O: <PATH> output directory (absolute path). LoMA generates a consensus sequence for each input. The final sequences will be stored in a directory named "CONSENSUS", which will be made in the process.  
   
 -b: <INT> block size. This is the window size. When LoMA makes a consensus sequene, it divides the whole region into pieces. (default=3000)  
   
