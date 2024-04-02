@@ -17,11 +17,8 @@ fastq file
 ### Output
 fasta file (.cs)
 ### Usage
-A user can download all source files by git clone.
-```sh
-$ git clone https://github.com/kolikem/loma
-```
-Then go to the directory loma.
+Users can download all source files from "Releases". Please download the latest version v1.1.3.
+Then decompress and go to the directory loma.
 ```sh
 $ cd loma
 ```
