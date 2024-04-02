@@ -17,7 +17,7 @@ fastq file
 ### Output
 fasta file (.cs)
 ### Usage
-Users can download all source files from "Releases". Please download the latest version v1.1.3.
+Users can download all source files from "Releases". Please download the latest version v1.1.3.  
 Then decompress and go to the directory loma.
 ```sh
 $ cd loma
